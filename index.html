@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload Form</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet"> <!-- Importing Manrope font -->
+  <style>
+    body {
+      background-size: cover;
+      height: 110vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Manrope', sans-serif;
+    }
+    .container {
+      background-color: rgba(255, 255, 255, 0.4); /* Adjust opacity for frosted effect */
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.5); 
+      max-width: 400px;
+      width: 100%;
+      backdrop-filter: blur(2px); 
+      transition: box-shadow 0.3s ease;
+    }
+    .container:hover {
+      box-shadow: 0px 20px 60px #718dcd; 
+    }
+    .container img {
+      display: block;
+      margin: 0 auto 20px;
+      border-radius: 5px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="file"],
+    select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    input[type="file"] {
+      cursor: pointer;
+    }
+    button[type="button"] {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    button[type="button"]:hover {
+      background-color: #718dcd;
+    }
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .please-wait-text {
+      text-align: center;
+      font-weight: bold;
+      display: none;
+      margin-top: 10px;
+    }
+    .design-text {
+      text-align: center;
+      margin-top: 20px;
+      color: #000000; 
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <form accept-charset="UTF-8" id="myForm" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="nameInput">Name:</label>
+        <input type="text" id="nameInput" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="batchInput">Batch:</label>
+        <input type="text" id="batchInput" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="resourceTypeInput">Resource Type:</label>
+        <select id="resourceTypeInput" class="form-control" required>
+          <option value="">Select Resource Type</option>
+          <option value="Questions">Questions</option>
+          <option value="Lab Manuals">Lab Manuals</option>
+          <option value="Books">Books</option>
+          <option value="Notes">Notes</option>
+          <option value="Slideshows">Slideshows</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="courseNoInput">Course No.:</label>
+        <input type="text" id="courseNoInput" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="teacherNameInput">Course Teacher's Name:</label>
+        <input type="text" id="teacherNameInput" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="fileInput">Upload your File:</label>
+        <input type="file" id="fileInput" class="form-control" required>
+      </div>
+      <button type="button" id="submitButton">Add File</button>
+      <div class="please-wait-text" id="pleaseWaitText">Please wait...</div>
+    </form>
+    <p class="design-text">Designed by SiliconX</p>
+  </div>
+
+<script>
+    document.getElementById('submitButton').addEventListener('click', function() {
+      var nameInput = document.getElementById('nameInput').value;
+      var batchInput = document.getElementById('batchInput').value;
+      var resourceTypeInput = document.getElementById('resourceTypeInput').value;
+      var courseNoInput = document.getElementById('courseNoInput').value;
+      var teacherNameInput = document.getElementById('teacherNameInput').value;
+      var fileInput = document.getElementById('fileInput');
+      var uploadedFile = fileInput.files[0];
+
+      var fileReader = new FileReader();
+      fileReader.onload = function(e) {
+        var obj = {
+          name: nameInput,
+          batch: batchInput,
+          resourceType: resourceTypeInput,
+          courseNo: courseNoInput,
+          teacherName: teacherNameInput,
+          fileName: nameInput + '_' + batchInput + '_' + resourceTypeInput + '_' + courseNoInput + '_' + teacherNameInput + '_' + uploadedFile.name,
+          mimeType: uploadedFile.type,
+          data: fileReader.result.split(',')[1]
+        };
+        google.script.run.withSuccessHandler(myResult).adderFile(obj);
+      };
+      fileReader.readAsDataURL(uploadedFile);
+      document.getElementById('pleaseWaitText').style.display = 'inline'; 
+    });
+
+    function myResult(val) {
+      var message = document.createElement('div');
+      message.classList.add('alert', 'alert-success');
+      message.textContent = 'File added successfully!';
+      document.body.appendChild(message);
+      document.getElementById('pleaseWaitText').style.display = 'none'; 
+    
+    }
+  </script>
+</body>
+</html>
